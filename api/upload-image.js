@@ -11,13 +11,11 @@ export default async function handler(req, res) {
   if (!imageUrl || !siteId || !fileName) return res.status(400).json({ error: 'Missing required fields' });
 
   try {
-    // Download image server-side (no CORS issues)
     const imgResp = await fetch(imageUrl);
     const imgBuffer = await imgResp.arrayBuffer();
     const imgSize = imgBuffer.byteLength;
     const hashHex = crypto.createHash('sha256').update(Buffer.from(imgBuffer)).digest('hex');
 
-    // Create Webflow asset metadata
     const metaResp = await fetch(`https://api.webflow.com/v2/sites/${siteId}/assets`, {
       method: 'POST',
       headers: {
@@ -27,18 +25,24 @@ export default async function handler(req, res) {
       body: JSON.stringify({ fileName, fileSize: imgSize, fileHash: hashHex, mimeType: 'image/jpeg' }),
     });
     const metaData = await metaResp.json();
+    console.log('Webflow asset response:', JSON.stringify(metaData));
     if (!metaData.uploadUrl || !metaData.id) throw new Error('Webflow asset creation failed: ' + JSON.stringify(metaData));
 
-    // Upload to S3
     const uploadResp = await fetch(metaData.uploadUrl, {
       method: 'PUT',
-      headers: { 'Content-Type': 'image/jpeg' },
+      headers: { 'Content-Type': 'image/jpeg', 'Content-Length': imgSize.toString() },
       body: imgBuffer,
     });
-    if (!uploadResp.ok) throw new Error('S3 upload failed: ' + uploadResp.status);
+    
+    if (!uploadResp.ok) {
+      const uploadErr = await uploadResp.text();
+      console.log('S3 error:', uploadErr);
+      throw new Error('S3 upload failed: ' + uploadResp.status + ' ' + uploadErr);
+    }
 
     res.status(200).json({ success: true, assetId: metaData.id });
   } catch (err) {
+    console.log('Upload error:', err.message);
     res.status(500).json({ error: err.message });
   }
 }
