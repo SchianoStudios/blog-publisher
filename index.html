@@ -292,8 +292,13 @@ async function generatePost() {
     }], 'You are an expert SEO content writer for a web design agency called Schiano Studios. Write engaging, well-structured, search-optimized blog posts. Return pure JSON only.');
 
     if (!resp.content || !resp.content[0]) throw new Error('Bad API response: ' + JSON.stringify(resp));
-    const raw = resp.content[0].text.replace(/```json|```/g, '').trim();
-    postData = JSON.parse(raw);
+    let raw = resp.content[0].text.replace(/```json|```/g, '').trim();
+    // Find JSON object boundaries
+    const jsonStart = raw.indexOf('{');
+    const jsonEnd = raw.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) throw new Error('No JSON found in response');
+    raw = raw.substring(jsonStart, jsonEnd + 1);
+    postData = JSON.parse(raw);;
     postData.date = today;
 
     const cat = CATEGORIES[postData.category] ? postData.category : Object.keys(CATEGORIES)[0];
