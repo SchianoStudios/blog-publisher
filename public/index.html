@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog Publisher — Forms to the People</title>
+  <title>Blog Publisher — Schiano Studios</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0a0a0a; color: #f0ede8; font-family: 'Georgia', serif; min-height: 100vh; }
@@ -98,7 +98,7 @@
 
 <div class="header">
   <div>
-    <div class="header-title">Forms to the People</div>
+    <div class="header-title">Schiano Studios</div>
     <div class="header-name">Blog Post Publisher</div>
   </div>
   <div class="steps">
@@ -329,7 +329,7 @@ async function generatePost() {
     const resp = await callAnthropic([{
       role: 'user',
       content: `Write a comprehensive, SEO-optimized blog post about: "${topic}"\n\nToday's date: ${today}\n\nAlso pick the best taxonomy from EXACTLY these options:\n\nCATEGORIES (pick 1): ${Object.keys(CATEGORIES).join(', ')}\nSUB_CATEGORIES (pick 1): ${Object.keys(SUB_CATEGORIES).join(', ')}\nTAGS (pick 3–5): ${Object.keys(TAGS).join(', ')}\n\nReturn ONLY valid JSON — no markdown, no backticks:\n{\n  "title": "post title",\n  "slug": "url-slug",\n  "cardSnippet": "under 160 chars",\n  "metaDescription": "under 160 chars",\n  "readTime": "X min read",\n  "bodyTop": "HTML first half with H2s/paragraphs/lists, link to Semrush or Ahrefs where relevant",\n  "bodyBottom": "HTML second half, end with CTA to /contact",\n  "imageQuery": "3-4 word Unsplash query",\n  "imageAlt": "descriptive alt text",\n  "category": "exact category name",\n  "subCategory": "exact sub-category name",\n  "tags": ["tag1", "tag2", "tag3"]\n}`
-    }], 'You are an expert SEO content writer for a web design agency called Forms to the People. Write engaging, well-structured, search-optimized blog posts. Return pure JSON only.');
+    }], 'You are an expert SEO content writer for a web design agency called Schiano Studios. Write engaging, well-structured, search-optimized blog posts. Return pure JSON only.');
 
     const raw = resp.content[0].text.replace(/```json|```/g, '').trim();
     postData = JSON.parse(raw);
