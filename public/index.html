@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Publisher — Schiano Studios</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #f0ede8; font-family: 'Georgia', serif; min-height: 100vh; }
+    .header { border-bottom: 1px solid #1a1a1a; padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; }
+    .header-title { font-size: 11px; letter-spacing: 0.2em; color: #555; text-transform: uppercase; margin-bottom: 4px; }
+    .header-name { font-size: 20px; }
+    .steps { display: flex; align-items: center; }
+    .step { display: flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 12px; letter-spacing: 0.05em; border-radius: 2px; transition: all 0.3s; color: #333; }
+    .step.active { background: #d4a843; color: #0a0a0a; }
+    .step.done { color: #555; }
+    .step-divider { width: 20px; height: 1px; background: #1a1a1a; }
+    .container { max-width: 780px; margin: 0 auto; padding: 60px 40px; }
+    .error-box { background: #1a0a0a; border: 1px solid #5a1a1a; border-radius: 4px; padding: 16px 20px; margin-bottom: 32px; color: #ff8080; font-size: 14px; display: none; }
+    .error-box.show { display: block; }
+    .loading { text-align: center; padding: 80px 0; display: none; }
+    .loading.show { display: block; }
+    .spinner { font-size: 32px; display: inline-block; animation: spin 2s linear infinite; margin-bottom: 20px; }
+    .loading-msg { color: #d4a843; font-size: 14px; letter-spacing: 0.1em; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .panel { display: none; }
+    .panel.show { display: block; }
+    .step-label { font-size: 11px; letter-spacing: 0.2em; color: #d4a843; text-transform: uppercase; margin-bottom: 12px; }
+    h1.panel-title { font-size: 36px; font-weight: normal; line-height: 1.2; margin-bottom: 12px; }
+    .panel-sub { color: #555; font-size: 15px; line-height: 1.6; margin-bottom: 40px; }
+    label.field-label { display: block; font-size: 11px; letter-spacing: 0.15em; color: #888; text-transform: uppercase; margin-bottom: 10px; }
+    textarea, select { width: 100%; background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 14px 16px; color: #f0ede8; font-size: 14px; font-family: inherit; outline: none; }
+    textarea { min-height: 100px; resize: vertical; line-height: 1.5; font-size: 16px; }
+    .field-hint { font-size: 12px; color: #444; margin-top: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .btn { border: none; padding: 16px 40px; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; font-family: inherit; transition: all 0.2s; }
+    .btn-primary { background: #d4a843; color: #0a0a0a; }
+    .btn-primary:disabled { background: #1a1a1a; color: #444; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: #555; border: 1px solid #2a2a2a; padding: 16px 24px; font-size: 14px; cursor: pointer; border-radius: 2px; font-family: inherit; }
+    .btn-row { display: flex; gap: 12px; }
+    .card { background: #111; border: 1px solid #1a1a1a; border-radius: 4px; padding: 20px; margin-bottom: 16px; }
+    .card-label { font-size: 10px; letter-spacing: 0.15em; color: #555; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-size: 14px; color: #aaa; line-height: 1.6; }
+    .taxonomy-card { background: #111; border: 1px solid #2a2218; border-radius: 4px; padding: 20px; margin-bottom: 24px; }
+    .taxonomy-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .taxonomy-title { font-size: 10px; letter-spacing: 0.15em; color: #d4a843; text-transform: uppercase; }
+    .taxonomy-hint { font-size: 11px; color: #444; }
+    .tags-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .tags-toggle { font-size: 11px; color: #555; background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit; }
+    .active-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-active { padding: 5px 12px; font-size: 12px; border-radius: 2px; border: 1px solid #d4a843; background: #d4a843; color: #0a0a0a; cursor: pointer; letter-spacing: 0.03em; font-family: inherit; }
+    .tag-inactive { padding: 5px 12px; font-size: 12px; border-radius: 2px; border: 1px solid #2a2a2a; background: transparent; color: #666; cursor: pointer; letter-spacing: 0.03em; font-family: inherit; }
+    .tag-inactive:disabled { opacity: 0.3; cursor: not-allowed; }
+    .all-tags { margin-top: 12px; padding-top: 12px; border-top: 1px solid #1a1a1a; display: none; flex-wrap: wrap; gap: 6px; }
+    .all-tags.show { display: flex; }
+    .image-preview { margin-bottom: 24px; border-radius: 4px; overflow: hidden; border: 1px solid #1a1a1a; }
+    .image-preview img { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .image-alt { padding: 10px 16px; background: #111; font-size: 12px; color: #555; }
+    .body-preview { background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 4px; padding: 24px; margin-bottom: 32px; max-height: 280px; overflow-y: auto; }
+    .body-preview-label { font-size: 10px; letter-spacing: 0.15em; color: #555; text-transform: uppercase; margin-bottom: 16px; }
+    .body-content { font-size: 13px; color: #888; line-height: 1.7; }
+    .body-content h2 { color: #aaa; font-size: 15px; margin: 16px 0 8px; font-weight: normal; }
+    .body-content p { margin-bottom: 10px; }
+    .body-content ul, .body-content ol { padding-left: 20px; margin-bottom: 10px; }
+    .body-content a { color: #d4a843; }
+    .review-title { font-size: 28px; font-weight: normal; line-height: 1.3; margin-bottom: 8px; }
+    .review-meta { color: #555; font-size: 13px; margin-bottom: 32px; }
+    .success-center { text-align: center; padding: 40px 0; }
+    .success-icon { font-size: 56px; margin-bottom: 24px; }
+    .success-label { font-size: 11px; letter-spacing: 0.2em; color: #d4a843; text-transform: uppercase; margin-bottom: 16px; }
+    .success-title { font-size: 26px; font-weight: normal; margin-bottom: 12px; line-height: 1.3; }
+    .success-slug { color: #555; font-size: 13px; margin-bottom: 8px; font-family: monospace; }
+    .success-id { color: #333; font-size: 11px; margin-bottom: 32px; font-family: monospace; }
+    .success-image { margin: 0 auto 40px; border-radius: 4px; overflow: hidden; border: 1px solid #1a1a1a; max-width: 480px; }
+    .success-image img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .success-btn-row { display: flex; gap: 12px; justify-content: center; }
+    .btn-link { background: #d4a843; color: #0a0a0a; padding: 14px 32px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px; text-decoration: none; font-family: inherit; }
+  </style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="header-title">Schiano Studios</div>
+    <div class="header-name">Blog Post Publisher</div>
+  </div>
+  <div class="steps">
+    <div class="step active" id="step-0"><span>✦</span><span>Topic</span></div>
+    <div class="step-divider"></div>
+    <div class="step" id="step-1"><span>◈</span><span>Generate</span></div>
+    <div class="step-divider"></div>
+    <div class="step" id="step-2"><span>◎</span><span>Review</span></div>
+    <div class="step-divider"></div>
+    <div class="step" id="step-3"><span>◉</span><span>Publish</span></div>
+  </div>
+</div>
+<div class="container">
+  <div class="error-box" id="error-box"></div>
+  <div class="loading" id="loading"><div class="spinner">◈</div><div class="loading-msg" id="loading-msg">Working...</div></div>
+
+  <div class="panel show" id="panel-0">
+    <div class="step-label">Step 1 of 4</div>
+    <h1 class="panel-title">What should this post be about?</h1>
+    <p class="panel-sub">Just give me a topic. I'll write the post, choose the best category, subcategory and tags, find a royalty-free image, and publish everything automatically.</p>
+    <div style="margin-bottom: 40px;">
+      <label class="field-label">Topic or title idea</label>
+      <textarea id="topic-input" placeholder="e.g. How to do keyword research for local businesses..."></textarea>
+      <div class="field-hint">Category, subcategory &amp; tags are chosen automatically — you can review and adjust before publishing.</div>
+    </div>
+    <button class="btn btn-primary" id="btn-generate" onclick="generatePost()" disabled>Generate Post ✦</button>
+  </div>
+
+  <div class="panel" id="panel-2">
+    <div class="step-label">Step 3 of 4 — Review</div>
+    <div class="review-title" id="review-title"></div>
+    <div class="review-meta" id="review-meta"></div>
+    <div class="image-preview" id="image-preview" style="display:none;">
+      <img id="preview-img" src="" alt="" onerror="this.parentElement.style.display='none'" />
+      <div class="image-alt"><strong style="color:#777">Alt:</strong> <span id="preview-alt"></span></div>
+    </div>
+    <div class="taxonomy-card">
+      <div class="taxonomy-header">
+        <div class="taxonomy-title">✦ AI-Selected Taxonomy</div>
+        <div class="taxonomy-hint">Adjust any field if needed</div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label class="field-label">Category</label>
+          <select id="sel-category"></select>
+        </div>
+        <div>
+          <label class="field-label">Sub-Category</label>
+          <select id="sel-subcategory"></select>
+        </div>
+      </div>
+      <div>
+        <div class="tags-header">
+          <label class="field-label" style="margin-bottom:0">Tags</label>
+          <button class="tags-toggle" onclick="toggleTagPanel()">Change tags</button>
+        </div>
+        <div class="active-tags" id="active-tags"></div>
+        <div class="all-tags" id="all-tags"></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-label">Card Snippet</div><div class="card-value" id="review-snippet"></div></div>
+    <div class="card"><div class="card-label">Meta Description</div><div class="card-value" id="review-meta-desc"></div></div>
+    <div class="body-preview">
+      <div class="body-preview-label">Post Body Preview</div>
+      <div class="body-content" id="body-preview"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="publishPost()">Upload Image &amp; Publish ◉</button>
+      <button class="btn-ghost" onclick="resetApp()">Start Over</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-3">
+    <div class="success-center">
+      <div class="success-icon">◉</div>
+      <div class="success-label">Published</div>
+      <div class="success-title" id="success-title"></div>
+      <div class="success-slug" id="success-slug"></div>
+      <div class="success-id" id="success-id"></div>
+      <div class="success-image" id="success-image" style="display:none;"><img id="success-img" src="" alt="" onerror="this.parentElement.style.display='none'" /></div>
+      <div class="success-btn-row">
+        <a class="btn-link" id="success-link" href="#" target="_blank" rel="noopener noreferrer">View Live Post ↗</a>
+        <button class="btn-ghost" onclick="resetApp()">New Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SITE_ID = "65f84f5590354c6d7dcf4e39";
+const COLLECTION_ID = "660d58957af23fb39d811a83";
+const CMS_LOCALE_ID = "660d49b5d8012534daba792a";
+
+const CATEGORIES = {
+  "SEO & Analytics": "660d4f44be784480d33e97b1",
+  "Digital Marketing": "660d4f4ed8dd1c0f27cf15ad",
+  "Web Design": "660d4f378170818096c5d0d5",
+  "Development & Tech": "660d4f6cadb8f71cead625ad",
+  "Agency Insights": "660d4f7f6f3240c5eb914eee",
+  "Resources & Tools": "660d4f8a6f3240c5eb915b47",
+};
+const SUB_CATEGORIES = {
+  "SEO Strategies": "660d521df00263e046be0973",
+  "Google Analytics Tips": "660d521081948ad05838aa01",
+  "Keyword Research": "660d52030024e13e78861b50",
+  "Local SEO": "660d51f7e4620a4235efb1fc",
+  "Content Marketing": "660d51e72dfab9a395f674c6",
+  "Social Media Strategies": "660d51db830081d9511b80b3",
+  "Email Marketing": "660d51cda277ef4e5004ce3a",
+  "PPC & Ad Campaigns": "660d51bf7667e5320c824d56",
+  "Tutorials & Guides": "660d5033adb8f71cead6e2fc",
+  "Marketing Tools": "660d5020eff61f9acee0ed14",
+  "Frontend Development": "660d50ccb38ddac40b94e26d",
+  "Website Security": "660d50af0d06f4436f1b2af0",
+  "Trends & Inspirations": "660d5277c009a8aee4a2a884",
+  "UX/UI Design Tips": "660d52675ba11bc9b9c35922",
+};
+const TAGS = {
+  "Success Stories":"660d57ef309bfcd9dbdb30c9","Industry News":"660d57eff421703bb5d25736","Opinion Pieces":"660d57ef5ba11bc9b9c83c5a","Interviews":"660d57ef7658000e5d7df936","Reviews":"660d57ef756c4456df95917c","Case Studies":"660d57ef253a526ba1ce0646","How-To Guides":"660d57eff0fad7dc2414658b","Design Inspiration":"660d57ef5bcf202b3a114314","Best Practices":"660d57ef5bd8f3eb1d6959c6","Free Templates":"660d57efcf5a497059a7e441","Tutorial Highlights":"660d57ef883b45b508a4a3ac","Coding Resources":"660d57ef12ad9e2ba2faef5d","Agency Culture":"660d57ef6987b3f6fea28ca1","Productivity Apps":"660d57ee8eb0c3cdd4c1ee39","Analytics Platforms":"660d57ee6ba4fd4872eb6757","SEO Plugins":"660d57ee0024e13e788bf11f","Design Software":"660d57eed429a4854e1ebbc8","Industry Awards":"660d57eeab2c751ddf4a1167","Collaboration Tools":"660d57ee04688ce2920816b7","Professional Development":"660d57ee7658000e5d7df8d0","Team Building":"660d57eec0a65dc97424adfc","Creative Process":"660d57ee91caba866d4d3a16","Client Relations":"660d57ee830081d951212f7e","Project Management":"660d57ee32e4dceb505b7b69","E-commerce Solutions":"660d57eeff846516c7427a8d","Website Maintenance":"660d57ee21adfc4cfd01b103","Content Management Systems":"660d57ed95fd920e8eb31ca4","API Integration":"660d57ed7667e5320c888769","Security Best Practices":"660d57edff846516c7427a56","Web Performance":"660d57ed64de9517e4ae05ac","CSS Tricks":"660d57eddbf00cc3c6b8932e","Lead Generation":"660d57eda6271ef8e836d4da","JavaScript Frameworks":"660d57ed082b72307dac6c0d","Branding":"660d57edaf4490dd9841ce59","Influencer Marketing":"660d57ed8d40179c283623c7","Video Marketing":"660d57ed756c4456df959046","Digital Advertising":"660d57ed2dfab9a395fbc854","Email Campaigns":"660d57ed71fec30a6fea4146","Social Media Trends":"660d57ed8cb4a375b950eca1","Backlink Strategies":"660d57edcf5a497059a7e299","Content Strategy":"660d57ed2dc9efc426280a34","Conversion Rate Optimization":"660d57eceff61f9acee8afd4","Google Updates":"660d57ec30b508b51342d66d","Traffic Analysis":"660d57ec7f4af7cea998e1d3","On-Page SEO":"660d57ec756c4456df958fd2","SEO Tools":"660d57ec8eb0c3cdd4c1ebd6","User Interface (UI)":"660d57ec3992e594d0f265a0","Technical SEO":"660d57ec91caba866d4d38d9","Off-Page SEO":"660d57ec8f1e22f9ee24397c","Web Standards":"660d57ec552f00bff4fcd00d","Color Theory":"660d57ec907499473d374276","User Experience (UX)":"660d57eca2510fc4463441b4","Typography":"660d57ec06e74980e1c28d55","Mobile Design":"660d57ec5ba11bc9b9c83ad4","Responsive Design":"660d57ec4f5ef97e8abee987"
+};
+
+let postData = null;
+let imageUrl = null;
+let imageAlt = null;
+let selectedTags = [];
+let tagPanelOpen = false;
+
+Object.keys(CATEGORIES).forEach(c => {
+  document.getElementById('sel-category').innerHTML += `<option>${c}</option>`;
+});
+Object.keys(SUB_CATEGORIES).forEach(s => {
+  document.getElementById('sel-subcategory').innerHTML += `<option>${s}</option>`;
+});
+
+const topicInput = document.getElementById('topic-input');
+const btnGenerate = document.getElementById('btn-generate');
+['input','keyup','paste','change'].forEach(evt => {
+  topicInput.addEventListener(evt, function() {
+    setTimeout(() => { btnGenerate.disabled = !this.value.trim(); }, 10);
+  });
+});
+
+function setStep(n) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    else if (i < n) { s.classList.add('done'); s.querySelector('span').textContent = '✓'; }
+  });
+  if (n !== 1) document.getElementById(`panel-${n}`).classList.add('show');
+}
+
+function showLoading(msg) {
+  document.getElementById('loading-msg').textContent = msg;
+  document.getElementById('loading').classList.add('show');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+}
+function hideLoading() { document.getElementById('loading').classList.remove('show'); }
+function showError(msg) { const el = document.getElementById('error-box'); el.textContent = '⚠ ' + msg; el.classList.add('show'); }
+function hideError() { document.getElementById('error-box').classList.remove('show'); }
+
+function renderTags() {
+  const activeEl = document.getElementById('active-tags');
+  const allEl = document.getElementById('all-tags');
+  activeEl.innerHTML = selectedTags.length
+    ? selectedTags.map(t => `<button class="tag-active" onclick="removeTag('${t}')">${t} ×</button>`).join('')
+    : '<span style="color:#444;font-size:13px">None selected</span>';
+  allEl.innerHTML = Object.keys(TAGS)
+    .filter(t => !selectedTags.includes(t))
+    .map(t => `<button class="tag-inactive" onclick="addTag('${t}')" ${selectedTags.length >= 5 ? 'disabled' : ''}>${t}</button>`)
+    .join('');
+}
+
+function addTag(tag) { if (selectedTags.length < 5) { selectedTags.push(tag); renderTags(); } }
+function removeTag(tag) { selectedTags = selectedTags.filter(t => t !== tag); renderTags(); }
+function toggleTagPanel() {
+  tagPanelOpen = !tagPanelOpen;
+  document.getElementById('all-tags').classList.toggle('show', tagPanelOpen);
+  document.querySelector('.tags-toggle').textContent = tagPanelOpen ? 'Done' : 'Change tags';
+}
+
+async function callAnthropic(messages, system, maxTokens = 8000) {
+  const resp = await fetch('/api/anthropic', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: maxTokens, system, messages }),
+  });
+  if (!resp.ok) throw new Error('API error ' + resp.status);
+  return resp.json();
+}
+
+async function callWebflow(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const resp = await fetch(`/api/webflow/${path}`, opts);
+  return resp.json();
+}
+
+async function generatePost() {
+  const topic = topicInput.value.trim();
+  if (!topic) return;
+  hideError();
+  showLoading('Writing your blog post...');
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const resp = await callAnthropic([{
+      role: 'user',
+      content: `Write a comprehensive, SEO-optimized blog post about: "${topic}"\n\nToday's date: ${today}\n\nAlso pick the best taxonomy from EXACTLY these options:\n\nCATEGORIES (pick 1): ${Object.keys(CATEGORIES).join(', ')}\nSUB_CATEGORIES (pick 1): ${Object.keys(SUB_CATEGORIES).join(', ')}\nTAGS (pick 3-5): ${Object.keys(TAGS).join(', ')}\n\nReturn ONLY valid JSON - no markdown, no backticks:\n{\n  "title": "post title",\n  "slug": "url-slug",\n  "cardSnippet": "under 160 chars",\n  "metaDescription": "under 160 chars",\n  "readTime": "X min read",\n  "bodyTop": "HTML first half with H2s/paragraphs/lists",\n  "bodyBottom": "HTML second half, end with CTA to /contact",\n  "imageQuery": "3-4 word Unsplash query",\n  "imageAlt": "descriptive alt text",\n  "category": "exact category name",\n  "subCategory": "exact sub-category name",\n  "tags": ["tag1", "tag2", "tag3"]\n}`
+    }], 'You are an expert SEO content writer for a web design agency called Schiano Studios. Write engaging, well-structured, search-optimized blog posts. Return pure JSON only.');
+
+    if (!resp.content || !resp.content[0]) throw new Error('Bad API response: ' + JSON.stringify(resp));
+    const raw = resp.content[0].text.replace(/```json|```/g, '').trim();
+    postData = JSON.parse(raw);
+    postData.date = today;
+
+    const cat = CATEGORIES[postData.category] ? postData.category : Object.keys(CATEGORIES)[0];
+    const sub = SUB_CATEGORIES[postData.subCategory] ? postData.subCategory : Object.keys(SUB_CATEGORIES)[0];
+    selectedTags = (postData.tags || []).filter(t => TAGS[t]).slice(0, 5);
+    document.getElementById('sel-category').value = cat;
+    document.getElementById('sel-subcategory').value = sub;
+
+    showLoading('Finding the perfect image...');
+    imageUrl = `https://source.unsplash.com/1200x630/?${encodeURIComponent(postData.imageQuery)}`;
+    imageAlt = postData.imageAlt;
+
+    document.getElementById('review-title').textContent = postData.title;
+    document.getElementById('review-meta').textContent = postData.readTime;
+    document.getElementById('preview-img').src = imageUrl;
+    document.getElementById('preview-img').alt = imageAlt;
+    document.getElementById('preview-alt').textContent = imageAlt;
+    document.getElementById('image-preview').style.display = 'block';
+    document.getElementById('review-snippet').textContent = postData.cardSnippet;
+    document.getElementById('review-meta-desc').textContent = postData.metaDescription;
+    document.getElementById('body-preview').innerHTML = postData.bodyTop + postData.bodyBottom;
+    renderTags();
+    hideLoading();
+    setStep(2);
+    document.getElementById('panel-2').classList.add('show');
+  } catch(e) {
+    hideLoading();
+    showError('Generation failed: ' + e.message);
+    setStep(0);
+    document.getElementById('panel-0').classList.add('show');
+  }
+}
+
+async function publishPost() {
+  hideError();
+  showLoading('Resolving image...');
+  setStep(3);
+  try {
+    const category = document.getElementById('sel-category').value;
+    const subCategory = document.getElementById('sel-subcategory').value;
+    const tagIds = selectedTags.map(t => TAGS[t]).filter(Boolean);
+
+    // Resolve final image URL server-side
+    const uploadResp = await fetch('/api/upload-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageUrl, siteId: SITE_ID, fileName: `blog-${postData.slug}-hero.jpg` }),
+    });
+    const uploadData = await uploadResp.json();
+    if (!uploadData.assetId) throw new Error('Image upload failed: ' + JSON.stringify(uploadData));
+    const assetId = uploadData.assetId;
+
+    // Create CMS item
+    showLoading('Creating blog post...');
+    const cmsResp = await callWebflow(`collections/${COLLECTION_ID}/items/bulk`, 'POST', {
+      isDraft: false,
+      isArchived: false,
+      cmsLocaleIds: [CMS_LOCALE_ID],
+      fieldData: [{
+        name: postData.title,
+        slug: postData.slug,
+        'post-body-top': postData.bodyTop,
+        'post-body-bottom': postData.bodyBottom,
+        'card-snippet': postData.cardSnippet,
+        'page-meta-description': postData.metaDescription,
+        date: `${postData.date}T00:00:00.000Z`,
+        'read-time': postData.readTime,
+        'bog-category': CATEGORIES[category],
+        'bog-sub-category': SUB_CATEGORIES[subCategory],
+        'blog-tags': tagIds,
+        'main-image': assetId,
+        'main-image---alt-text': imageAlt,
+        'mid-blog-image': assetId,
+      }]
+    });
+
+    const newItemId = cmsResp.items?.[0]?.id;
+    if (!newItemId) throw new Error('CMS item creation failed: ' + JSON.stringify(cmsResp));
+
+    // Publish
+    showLoading('Publishing...');
+    await callWebflow(`collections/${COLLECTION_ID}/items/publish`, 'POST', { itemIds: [newItemId] });
+
+    hideLoading();
+    document.getElementById('success-title').textContent = postData.title;
+    document.getElementById('success-slug').textContent = `/blog-post/${postData.slug}`;
+    document.getElementById('success-id').textContent = `Item ID: ${newItemId}`;
+    document.getElementById('success-img').src = imageUrl;
+    document.getElementById('success-image').style.display = 'block';
+    document.getElementById('success-link').href = `https://www.formstothepeople.com/blog-post/${postData.slug}`;
+    document.getElementById('panel-3').classList.add('show');
+  } catch(e) {
+    hideLoading();
+    showError('Publishing failed: ' + e.message);
+    document.getElementById('panel-2').classList.add('show');
+  }
+}
+
+function resetApp() {
+  postData = null; imageUrl = null; imageAlt = null;
+  selectedTags = []; tagPanelOpen = false;
+  topicInput.value = '';
+  btnGenerate.disabled = true;
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    const icons = ['✦','◈','◎','◉'];
+    s.querySelector('span').textContent = icons[i];
+  });
+  hideError(); hideLoading(); setStep(0);
+  document.getElementById('panel-0').classList.add('show');
+}
+</script>
+</body>
+</html>
