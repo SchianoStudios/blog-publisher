@@ -248,7 +248,12 @@ Object.keys(SUB_CATEGORIES).forEach(s => {
 document.getElementById('topic-input').addEventListener('input', function() {
   document.getElementById('btn-generate').disabled = !this.value.trim();
 });
-
+document.getElementById('topic-input').addEventListener('keyup', function() {
+  document.getElementById('btn-generate').disabled = !this.value.trim();
+});
+document.getElementById('topic-input').addEventListener('paste', function() {
+  setTimeout(() => { document.getElementById('btn-generate').disabled = !this.value.trim(); }, 10);
+});
 function setStep(n) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
   document.querySelectorAll('.step').forEach((s, i) => {
