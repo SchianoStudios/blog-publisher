@@ -373,45 +373,28 @@ async function generatePost() {
 
 async function publishPost() {
   hideError();
-  showLoading('Downloading image...');
+  showLoading('Processing image...');
   setStep(3);
 
   try {
-    // 1. Get image size & hash for Webflow asset metadata
-    showLoading('Processing image...');
-    const imgResp = await fetch(imageUrl);
-    const imgBlob = await imgResp.blob();
-    const imgBuffer = await imgBlob.arrayBuffer();
-    const imgSize = imgBuffer.byteLength;
-    const hashHex = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', imgBuffer)))
-      .map(b => b.toString(16).padStart(2, '0')).join('');
+    const category = document.getElementById('sel-category').value;
+    const subCategory = document.getElementById('sel-subcategory').value;
+    const tagIds = selectedTags.map(t => TAGS[t]).filter(Boolean);
     const fileName = `blog-${postData.slug}-hero.jpg`;
 
-    // 2. Create asset metadata in Webflow
-    showLoading('Creating Webflow asset...');
-    const metaResp = await callWebflow(`sites/${SITE_ID}/assets`, 'POST', {
-      fileName, fileSize: imgSize, fileHash: hashHex, mimeType: 'image/jpeg'
-    });
-
-    const uploadUrl = metaResp.uploadUrl;
-    const assetId = metaResp.id;
-    if (!uploadUrl || !assetId) throw new Error('Webflow did not return an upload URL. Check asset permissions on your API token.');
-
-    // 3. Upload image via server proxy (avoids CORS on S3)
+    // Do everything server-side
     showLoading('Uploading image...');
     const uploadResp = await fetch('/api/upload-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uploadUrl, imageUrl }),
+      body: JSON.stringify({ imageUrl, siteId: SITE_ID, fileName }),
     });
     if (!uploadResp.ok) throw new Error('Image upload failed');
+    const uploadData = await uploadResp.json();
+    const assetId = uploadData.assetId;
 
-    // 4. Create CMS item
+    // Create CMS item
     showLoading('Creating blog post...');
-    const category = document.getElementById('sel-category').value;
-    const subCategory = document.getElementById('sel-subcategory').value;
-    const tagIds = selectedTags.map(t => TAGS[t]).filter(Boolean);
-
     const cmsResp = await callWebflow(`collections/${COLLECTION_ID}/items/bulk`, 'POST', {
       isDraft: false,
       isArchived: false,
@@ -432,6 +415,30 @@ async function publishPost() {
         'main-image---alt-text': imageAlt,
       }]
     });
+
+    const newItemId = cmsResp.items?.[0]?.id;
+    if (!newItemId) throw new Error('CMS item creation failed: ' + JSON.stringify(cmsResp));
+
+    // Publish item
+    showLoading('Publishing...');
+    await callWebflow(`collections/${COLLECTION_ID}/items/publish`, 'POST', { itemIds: [newItemId] });
+
+    // Done!
+    hideLoading();
+    document.getElementById('success-title').textContent = postData.title;
+    document.getElementById('success-slug').textContent = `/blog-post/${postData.slug}`;
+    document.getElementById('success-id').textContent = `Item ID: ${newItemId}`;
+    document.getElementById('success-img').src = imageUrl;
+    document.getElementById('success-image').style.display = 'block';
+    document.getElementById('success-link').href = `https://www.formstothepeople.com/blog-post/${postData.slug}`;
+    document.getElementById('panel-3').classList.add('show');
+
+  } catch(e) {
+    hideLoading();
+    showError('Publishing failed: ' + e.message);
+    document.getElementById('panel-2').classList.add('show');
+  }
+}
 
     const newItemId = cmsResp.items?.[0]?.id;
     if (!newItemId) throw new Error('CMS item creation failed: ' + JSON.stringify(cmsResp));
