@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import FormData from 'form-data';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -29,13 +30,22 @@ export default async function handler(req, res) {
     });
     const metaData = await metaResp.json();
     console.log('Webflow asset response:', JSON.stringify(metaData));
-    if (!metaData.uploadUrl || !metaData.id) throw new Error('Webflow asset creation failed: ' + JSON.stringify(metaData));
+    if (!metaData.uploadUrl || !metaData.uploadDetails || !metaData.id) {
+      throw new Error('Webflow asset creation failed: ' + JSON.stringify(metaData));
+    }
 
-    // Upload to S3
+    // Build multipart form with uploadDetails fields + file
+    const form = new FormData();
+    for (const [key, value] of Object.entries(metaData.uploadDetails)) {
+      form.append(key, value);
+    }
+    form.append('file', imgBuffer, { filename: fileName, contentType: 'image/jpeg' });
+
+    // POST to S3
     const uploadResp = await fetch(metaData.uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'image/jpeg' },
-      body: imgBuffer,
+      method: 'POST',
+      headers: form.getHeaders(),
+      body: form,
     });
 
     if (!uploadResp.ok) {
