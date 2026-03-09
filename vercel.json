@@ -1,5 +1,10 @@
 {
   "rewrites": [
     { "source": "/api/webflow/:path*", "destination": "/api/webflow?path=:path*" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "0 9 * * *"
+    }
   ]
-}
