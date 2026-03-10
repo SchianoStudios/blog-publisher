@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     console.log(`📝 Topic selected: ${topic}`);
 
     // Step 2: Call the existing blog generation endpoint
-    const blogRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://blog-publisher-rose.vercel.app'}/api/generate`, {
+    const blogRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'blog-publisher-kea0i3tlg-michael-schianos-projects.vercel.app'}/api/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
