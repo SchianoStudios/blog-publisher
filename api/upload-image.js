@@ -11,26 +11,18 @@ export default async function handler(req, res) {
   if (!imageQuery || !siteId || !fileName) return res.status(400).json({ error: 'Missing fields' });
 
   try {
-    // Step 1: Get image from Unsplash with fallback queries
-    let unsplashData = null;
-    const queries = [imageQuery, imageQuery.split(' ')[0], 'business technology'];
-    for (const query of queries) {
-      const r = await fetch(
-        `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=landscape`,
-        { headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` } }
-      );
-      const data = await r.json();
-      if (data.urls?.regular) { unsplashData = data; break; }
-    }
-    if (!unsplashData) throw new Error('Could not find any Unsplash image');
+    // Search only the requested subject. A generic fallback produced unrelated images.
+    const searchResp = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(imageQuery)}&orientation=landscape&per_page=5`,
+      { headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` } }
+    );
+    if (!searchResp.ok) throw new Error('Unsplash search failed: ' + searchResp.status);
+    const searchData = await searchResp.json();
+    const unsplashData = searchData.results?.find(photo => photo.urls?.regular && (photo.alt_description || photo.description));
+    if (!unsplashData) throw new Error('No described image matched the requested search');
 
-    // Step 2: Build alt text from Unsplash's own description + sprinkle in keyword
-    const unsplashAlt = unsplashData.alt_description || unsplashData.description || '';
-    let altText = unsplashAlt;
-    if (keyword && unsplashAlt && !unsplashAlt.toLowerCase().includes(keyword.toLowerCase())) {
-      altText = `${unsplashAlt} for ${keyword}`;
-    }
-    altText = altText.charAt(0).toUpperCase() + altText.slice(1);
+    // Alt text describes the visible image. Never append the article title or keywords.
+    const altText = (unsplashData.alt_description || unsplashData.description).replace(/[—–-]/g, ' ').replace(/\s+/g, ' ').trim();
 
     // Step 3: Download image
     const imgResp = await fetch(unsplashData.urls.regular);
@@ -77,3 +69,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+

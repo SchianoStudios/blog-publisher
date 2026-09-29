@@ -1,5 +1,5 @@
 // api/cron.js
-// Vercel Cron Job — runs daily to auto-publish a blog post
+// Vercel Cron Job — runs daily to prepare a blog draft
 // Protected by CRON_SECRET env variable
 
 export default async function handler(req, res) {
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         topic,
-        autoPublish: true
+        autoPublish: false
       })
     });
 
@@ -35,14 +35,14 @@ export default async function handler(req, res) {
     }
 
     const result = await blogRes.json();
-    console.log(`✅ Published: ${result.title}`);
+    console.log(`✅ Draft created: ${result.title}`);
 
     return res.status(200).json({
       success: true,
       topic,
       title: result.title,
       slug: result.slug,
-      publishedAt: new Date().toISOString()
+      draftedAt: new Date().toISOString()
     });
 
   } catch (error) {
@@ -62,6 +62,9 @@ async function generateTopic() {
     'Resources & Tools': ['Tutorials & Guides', 'Productivity Tools', 'Marketing Tools', 'Design Tools'],
   };
 
+  // Automated articles stay in evergreen educational categories.
+  // Agency stories and client results require source material and human review.
+  delete categories['Agency Insights'];
   const categoryNames = Object.keys(categories);
   const randomCategory = categoryNames[Math.floor(Math.random() * categoryNames.length)];
   const subCategories = categories[randomCategory];
@@ -79,7 +82,7 @@ async function generateTopic() {
       max_tokens: 100,
       messages: [{
         role: 'user',
-        content: `You are a content strategist for Schiano Studios, a NYC web design agency. Generate ONE specific blog post topic that fits exactly within this category: "${randomCategory}" and sub-category: "${randomSubCategory}". The topic should be practical and valuable for small business owners. Return only the topic title, nothing else. Do not include the year unless truly essential.`
+        content: `You are a content strategist for Schiano Studios, a NYC web design agency. Generate ONE specific blog post topic that fits exactly within this category: "${randomCategory}" and sub-category: "${randomSubCategory}". The topic should be practical and valuable for small business owners. Avoid client stories, claimed results, prices, law, product comparisons, and time sensitive news. Choose a narrow evergreen question that a small business owner can act on. Return only the topic title. Do not include a year or hyphen.`
       }]
     })
   });
@@ -87,3 +90,4 @@ async function generateTopic() {
   const data = await response.json();
   return data.content[0].text.trim();
 }
+
