@@ -1,5 +1,5 @@
 const DASHES = /[-\u2010-\u2015\u2212]/;
-const UNSOURCED_CLAIMS = /\b(?:we|our team|our clients|at schiano studios)\b|\b(?:case study|client success story|research shows|studies show)\b|\d+(?:\.\d+)?%|\$\s*\d+|\b20\d{2}\b/i;
+const UNSOURCED_CLAIMS = /\b(?:we|we've|we're|our|ours|at schiano studios)\b|\b(?:case study|client success story|research shows|studies show)\b|\d+(?:\.\d+)?%|\$\s*\d+|\b20\d{2}\b/i;
 const STOP_WORDS = new Set(['a', 'an', 'and', 'are', 'for', 'from', 'how', 'in', 'of', 'on', 'the', 'to', 'vs', 'with', 'your', 'you', 'small', 'business', 'guide']);
 
 export function visibleText(html = '') {
@@ -50,8 +50,29 @@ export function validatePost(post, existingTitles = []) {
   return issues;
 }
 
-export async function fetchExistingTitles(collectionId, token) {
+export function validateSeo(post, entry, allowedLinks = []) {
+  const issues = [];
+  const kw = entry.keyword.toLowerCase();
+  const words = kw.split(/\s+/);
+  const has = text => { const t = visibleText(text).toLowerCase(); return words.every(w => t.includes(w)); };
+  if (!has(post.title)) issues.push(`Title must contain the keyword "${entry.keyword}"`);
+  if (!has(post.metaDescription)) issues.push(`Meta description must contain the keyword "${entry.keyword}"`);
+  if (!/<h2\b[^>]*>[^<]*/i.test(post.bodyTop || '') || !has((post.bodyTop || '').match(/<h2\b[^>]*>[\s\S]*?<\/h2>/gi)?.join(' ') || '')) {
+    issues.push('At least one H2 in the first half must use the keyword');
+  }
+  const words800 = visibleText((post.bodyTop || '') + ' ' + (post.bodyBottom || '')).split(/\s+/).length;
+  if (words800 < 900) issues.push(`Body is ${words800} words; write at least 900`);
+  const hrefs = [...((post.bodyTop || '') + (post.bodyBottom || '')).matchAll(/href\s*=\s*"([^"]+)"/gi)].map(m => m[1]);
+  const bad = hrefs.filter(h => !allowedLinks.includes(h));
+  if (bad.length) issues.push('Links not on the allowed list: ' + bad.join(', '));
+  if (!hrefs.includes(entry.cta)) issues.push(`Must link to ${entry.cta}`);
+  if (hrefs.filter(h => h.startsWith('/blog-post/')).length < 1) issues.push('Must link to at least one related blog post');
+  return issues;
+}
+
+export async function fetchExistingItems(collectionId, token) {
   const titles = [];
+  const slugs = [];
   for (let offset = 0; ; offset += 100) {
     const response = await fetch(`https://api.webflow.com/v2/collections/${collectionId}/items?limit=100&offset=${offset}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -60,6 +81,7 @@ export async function fetchExistingTitles(collectionId, token) {
     const data = await response.json();
     if (!Array.isArray(data.items)) throw new Error('Blog title response was invalid');
     titles.push(...data.items.map(item => item.fieldData?.name).filter(Boolean));
-    if (data.items.length < 100) return titles;
+    slugs.push(...data.items.map(item => item.fieldData?.slug).filter(Boolean));
+    if (data.items.length < 100) return { titles, slugs };
   }
 }

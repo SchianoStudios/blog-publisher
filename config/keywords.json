@@ -1,0 +1,116 @@
+{
+  "_readme": "Keyword queue for the Schiano Studios blog. Cron drafts the first entry whose slug is not already in the CMS (draft, live or archived). Volumes and KD are SEMrush US, pulled 2026-10-08. Add new rows at the bottom; never reuse a slug.",
+  "allowedInternalLinks": [
+    "/quote",
+    "/free-mock-up",
+    "/projects",
+    "/contact",
+    "/blog-post/redesign-website-without-losing-rankings",
+    "/blog-post/mobile-first-design-converts-ux-guide",
+    "/blog-post/optimize-google-business-profile-local-search",
+    "/blog-post/google-local-search-ranking-small-business-2026",
+    "/blog-post/local-schema-markup-google-local-search-2026",
+    "/blog-post/google-analytics-4-goals-setup-guide",
+    "/blog-post/how-to-add-alt-text-images-accessibility-guide",
+    "/blog-post/mobile-first-indexing-webflow-google-2026",
+    "/blog-post/minimalist-navigation-user-experience-small-business"
+  ],
+  "queue": [
+    {
+      "keyword": "webflow vs wordpress",
+      "slug": "webflow-vs-wordpress-small-business",
+      "volume": 1000, "kd": 29,
+      "angle": "Help a small business owner choose between Webflow and WordPress based on who will edit the site, how much plugin upkeep they can handle, design flexibility, and hosting. No prices.",
+      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "contractor website",
+      "slug": "contractor-website-what-to-include",
+      "volume": 720, "kd": 8,
+      "angle": "What a contractor website needs so homeowners call: service area, licensing and insurance info, project photos, a simple quote form, and click to call on mobile.",
+      "category": "Web Design", "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "framer vs webflow",
+      "slug": "framer-vs-webflow",
+      "volume": 880, "kd": 28,
+      "angle": "Compare Framer and Webflow for a small business site: CMS needs, who maintains it, SEO controls, and when each one fits. No prices or feature lists that change often.",
+      "category": "Resources & Tools", "subCategory": "Design Tools",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "general contractor website design",
+      "slug": "general-contractor-website-design",
+      "volume": 720, "kd": 20,
+      "angle": "Design decisions for a general contractor site: page structure by service, project gallery that loads fast, trust details, and a quote request flow.",
+      "category": "Web Design", "subCategory": "Website Makeovers",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "webflow vs squarespace",
+      "slug": "webflow-vs-squarespace",
+      "volume": 480, "kd": 22,
+      "angle": "When a small business outgrows Squarespace and when it does not. Focus on CMS structure, design control, and who edits the site.",
+      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "webflow vs wix",
+      "slug": "webflow-vs-wix",
+      "volume": 480, "kd": 18,
+      "angle": "Wix versus Webflow for a local business: ease of editing, design limits, SEO settings, and moving later.",
+      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "restaurant website design",
+      "slug": "restaurant-website-design",
+      "volume": 1300, "kd": 36,
+      "angle": "What a restaurant site needs on a phone: menu as real text not a PDF, hours, location, reservations or ordering link, and photos that load fast.",
+      "category": "Web Design", "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "website seo for roofing contractor",
+      "slug": "roofing-contractor-website-seo",
+      "volume": 480, "kd": 14,
+      "angle": "Local SEO basics for a roofing contractor site: service area pages, Google Business Profile, page titles, project photos with alt text, and reviews.",
+      "category": "SEO & Analytics", "subCategory": "Local SEO",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "hvac contractor website",
+      "slug": "hvac-contractor-website-checklist",
+      "volume": 480, "kd": 9,
+      "angle": "A checklist to evaluate an HVAC contractor website: emergency contact visibility, service pages, financing info placement, mobile speed, and booking.",
+      "category": "Web Design", "subCategory": "Website Makeovers",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "webflow vs shopify",
+      "slug": "webflow-vs-shopify",
+      "volume": 260, "kd": 16,
+      "angle": "Webflow versus Shopify for a small brand that sells online: catalog size, checkout needs, content and design, and when to combine them.",
+      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "websites for contractors",
+      "slug": "websites-for-contractors-pages-that-matter",
+      "volume": 720, "kd": 30,
+      "angle": "The five pages every contractor site should have and what goes on each one.",
+      "category": "Web Design", "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "webflow vs bubble",
+      "slug": "webflow-vs-bubble",
+      "volume": 210, "kd": 12,
+      "angle": "Webflow builds marketing websites, Bubble builds web apps. Explain the difference and how a business decides which it needs.",
+      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "cta": "/contact"
+    }
+  ]
+}

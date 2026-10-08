@@ -1,14 +1,19 @@
-import { fetchExistingTitles, validatePost } from './content-quality.js';
+import { fetchExistingItems, validatePost, validateSeo } from './content-quality.js';
+import { loadKeywords } from './keywords.js';
+
+const MODEL = process.env.BLOG_MODEL || 'claude-sonnet-5-5';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.headers['authorization'] !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
-  const { topic, autoPublish } = req.body;
-  if (!topic) return res.status(400).json({ error: 'Missing topic' });
+  const { slug } = req.body || {};
+  const { queue, allowedInternalLinks } = loadKeywords();
+  const entry = queue.find(e => e.slug === slug);
+  if (!entry) return res.status(400).json({ error: 'Unknown keyword slug' });
+  const topic = entry.keyword;
 
   const SITE_ID = '65f84f5590354c6d7dcf4e39';
   const COLLECTION_ID = '660d58957af23fb39d811a83';
@@ -77,27 +82,52 @@ export default async function handler(req, res) {
   };
 
   try {
-    console.log('Writing blog content for:', topic);
-    const existingTitles = await fetchExistingTitles(COLLECTION_ID, process.env.WEBFLOW_API_TOKEN);
+    console.log('Writing blog content for keyword:', topic);
+    const { titles: existingTitles } = await fetchExistingItems(COLLECTION_ID, process.env.WEBFLOW_API_TOKEN);
     let post;
     let issues = [];
     for (let attempt = 0; attempt < 3; attempt++) {
+    const prompt = `You write practical articles for the blog of Schiano Studios, an independent web design studio in New York City that builds websites in Webflow for small businesses.
+
+Target search keyword: "${entry.keyword}"
+Angle: ${entry.angle}
+
+SEO requirements:
+- The title (max 60 characters) and the meta description (max 155 characters) both contain the exact keyword.
+- The first H2 uses the keyword or a close natural variant containing every word of it.
+- Answer the searcher's question directly in the first paragraph.
+- 900 to 1300 words total across bodyTop and bodyBottom, with clear H2 sections and H3s where useful. Use short paragraphs, lists where they help a reader scan, and concrete steps a business owner can act on.
+- Include exactly one link to ${entry.cta} as the closing call to action, and one or two links to related posts from this list where genuinely relevant. Use only these relative paths as href values, nothing else: ${allowedInternalLinks.join(', ')}
+
+Honesty rules, which override everything else:
+- Never write as "we", "our" or "us", and never describe work, clients, projects, results, or experience of Schiano Studios.
+- No statistics, percentages, dollar amounts, prices, study citations, or years.
+- No testimonials, guarantees, or ranking promises.
+- Do not describe product features or plans that change often; explain decision criteria instead.
+- Examples must be clearly hypothetical ("for example, a roofing company might...").
+
+Style: plain, direct, written to a small business owner. No hype words, no generic openers. Do not use hyphens, em dashes, en dashes, or any dash character in reader facing text; rewrite instead.
+
+Existing titles to avoid repeating: ${existingTitles.slice(0, 80).join(' | ')}.
+${issues.length ? 'Your previous draft failed these checks, fix every one: ' + issues.join('; ') : ''}
+
+Return ONLY valid JSON with these fields:
+{"title":"","cardSnippet":"max 150 chars","metaDescription":"","readTime":"X min read at 200 words per minute","bodyTop":"HTML, first half","bodyBottom":"HTML, second half","imageQuery":"specific Unsplash search for the hero image","midImageQuery":"different Unsplash search","tags":["2 to 4 from: How-To Guides, Best Practices, Technical SEO, On-Page SEO, User Experience (UX), User Interface (UI), Responsive Design, Mobile Design, Web Performance, Content Strategy, Lead Generation, Branding, E-commerce Solutions, Conversion Rate Optimization"]}`;
     const contentRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: `You are a web design and digital marketing expert writing for Schiano Studios, a NYC-based web design agency. Write a comprehensive, SEO-optimized blog post about: "${topic}"\n\nReturn ONLY a valid JSON object with these exact fields:\n{\n  "title": "compelling SEO title (max 60 chars, only include the year if it's truly essential to the topic)",\n  "slug": "url-friendly-slug-with-dashes",\n  "cardSnippet": "2-sentence preview for blog card (max 150 chars)",\n  "metaDescription": "SEO meta description (max 155 chars)",\n  "readTime": "X min read (calculate honestly based on word count at 200 words per minute, typically 3-7 min)",\n  "bodyTop": "<h2>Section Title</h2><p>Content...</p> (HTML, 300 to 450 words, first half of post)",\n  "bodyBottom": "<h2>Section Title</h2><p>Content...</p> (HTML, 300 to 450 words, second half of post)",\n  "imageQuery": "specific search query for a relevant Unsplash photo",\n  "midImageQuery": "different specific search query for a second Unsplash photo",\n  "category": "one of: Web Design, SEO & Analytics, Digital Marketing, Development & Tech, Agency Insights, Resources & Tools",\n  "subCategory": "one of: Trends & Inspirations, UX/UI Design Tips, Website Makeovers, Accessibility & Inclusivity, SEO Strategies, Google Analytics Tips, Keyword Research, Local SEO, Content Marketing, Social Media Strategies, Email Marketing, PPC & Ad Campaigns, Frontend Development, Backend Development, Website Security, Emerging Technologies, Behind the Scenes, Client Success Stories, Agency News, Tutorials & Guides, Productivity Tools, Marketing Tools, Design Tools",\n  "tags": ["tag1", "tag2"] (pick 2-4 from: How-To Guides, Best Practices, Industry News, Case Studies, Design Inspiration, SEO Tools, Technical SEO, On-Page SEO, Off-Page SEO, User Experience (UX), User Interface (UI), Responsive Design, Mobile Design, Typography, Color Theory, Web Performance, Content Strategy, Lead Generation, Branding, E-commerce Solutions, Google Updates, Backlink Strategies, Conversion Rate Optimization, Social Media Trends, Email Campaigns)\n}\n\nPick the category and subCategory that best matches the topic. Write directly to small business owners with short paragraphs, specific advice, and a natural voice. Aim for 600 to 900 words total. Do not use hyphens, em dashes, en dashes, or Unicode dash characters in any reader facing field. The technical URL slug may use hyphens. Do not invent clients, team size, project results, testimonials, statistics, studies, prices, deadlines, or personal agency experience. Do not write as we or claim what Schiano Studios has done. Avoid case studies, legal advice, rapidly changing product features, ranking guarantees, and dated claims. Use practical examples clearly framed as examples. Avoid generic openings and formulaic headings. If a point needs a fresh source you do not have, omit it. Existing titles to avoid: ${existingTitles.slice(0, 60).join(' | ')}. ${issues.length ? 'Revise the prior answer to fix: ' + issues.join('; ') : ''} Return only valid JSON.` }]
-      })
+      body: JSON.stringify({ model: MODEL, max_tokens: 8000, messages: [{ role: 'user', content: prompt }] })
     });
 
-    if (!contentRes.ok) throw new Error('Writing service failed: ' + contentRes.status);
+    if (!contentRes.ok) throw new Error('Writing service failed: ' + contentRes.status + ' ' + await contentRes.text());
     const contentData = await contentRes.json();
     const rawText = contentData.content[0].text;
     try {
-      post = JSON.parse(rawText.replace(/\`\`\`json|\`\`\`/g, '').trim());
-      issues = validatePost(post, existingTitles);
+      post = JSON.parse(rawText.replace(/```json|```/g, '').trim());
+      post.slug = entry.slug;
+      post.category = entry.category;
+      post.subCategory = entry.subCategory;
+      issues = [...validatePost(post, existingTitles), ...validateSeo(post, entry, allowedInternalLinks)];
     } catch {
       issues = ['Response was not valid JSON'];
     }
@@ -144,21 +174,12 @@ export default async function handler(req, res) {
     const createRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.WEBFLOW_API_TOKEN}` },
-      body: JSON.stringify({ isArchived: false, isDraft: !autoPublish, fieldData })
+      body: JSON.stringify({ isArchived: false, isDraft: true, fieldData })
     });
     const created = await createRes.json();
     if (!created.id) throw new Error('CMS create failed: ' + JSON.stringify(created));
 
-    if (autoPublish) {
-      const publishRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items/publish`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.WEBFLOW_API_TOKEN}` },
-        body: JSON.stringify({ itemIds: [created.id] })
-      });
-      if (!publishRes.ok) throw new Error('CMS publish failed: ' + await publishRes.text());
-    }
-
-    res.status(200).json({ success: true, title: post.title, slug: post.slug, category: post.category, subCategory: post.subCategory, tags: post.tags, itemId: created.id, published: !!autoPublish });
+    res.status(200).json({ success: true, title: post.title, slug: post.slug, category: post.category, subCategory: post.subCategory, tags: post.tags, itemId: created.id, published: false });
 
   } catch (err) {
     console.error('Generate failed:', err.message);
