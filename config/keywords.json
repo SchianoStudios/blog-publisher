@@ -1,5 +1,5 @@
 {
-  "_readme": "Keyword queue for the Schiano Studios blog. Cron drafts the first entry whose slug is not already in the CMS (draft, live or archived). Volumes and KD are SEMrush US, pulled 2026-10-08. Add new rows at the bottom; never reuse a slug.",
+  "_readme": "Keyword queue for the Schiano Studios blog. Cron drafts the first entry whose slug is not already in the CMS (draft, live or archived). Volumes and KD are SEMrush US, pulled 2026-10-08 (first 12 via Keyword Magic, rest via the SEMrush API, KD under 30). Add new rows at the bottom; never reuse a slug.",
   "allowedInternalLinks": [
     "/quote",
     "/free-mock-up",
@@ -19,98 +19,448 @@
     {
       "keyword": "webflow vs wordpress",
       "slug": "webflow-vs-wordpress-small-business",
-      "volume": 1000, "kd": 29,
+      "volume": 1000,
+      "kd": 29,
       "angle": "Help a small business owner choose between Webflow and WordPress based on who will edit the site, how much plugin upkeep they can handle, design flexibility, and hosting. No prices.",
-      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
       "cta": "/quote"
     },
     {
       "keyword": "contractor website",
       "slug": "contractor-website-what-to-include",
-      "volume": 720, "kd": 8,
+      "volume": 720,
+      "kd": 8,
       "angle": "What a contractor website needs so homeowners call: service area, licensing and insurance info, project photos, a simple quote form, and click to call on mobile.",
-      "category": "Web Design", "subCategory": "UX/UI Design Tips",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
       "cta": "/free-mock-up"
     },
     {
       "keyword": "framer vs webflow",
       "slug": "framer-vs-webflow",
-      "volume": 880, "kd": 28,
+      "volume": 880,
+      "kd": 28,
       "angle": "Compare Framer and Webflow for a small business site: CMS needs, who maintains it, SEO controls, and when each one fits. No prices or feature lists that change often.",
-      "category": "Resources & Tools", "subCategory": "Design Tools",
+      "category": "Resources & Tools",
+      "subCategory": "Design Tools",
       "cta": "/quote"
     },
     {
       "keyword": "general contractor website design",
       "slug": "general-contractor-website-design",
-      "volume": 720, "kd": 20,
+      "volume": 720,
+      "kd": 20,
       "angle": "Design decisions for a general contractor site: page structure by service, project gallery that loads fast, trust details, and a quote request flow.",
-      "category": "Web Design", "subCategory": "Website Makeovers",
+      "category": "Web Design",
+      "subCategory": "Website Makeovers",
       "cta": "/free-mock-up"
     },
     {
       "keyword": "webflow vs squarespace",
       "slug": "webflow-vs-squarespace",
-      "volume": 480, "kd": 22,
+      "volume": 480,
+      "kd": 22,
       "angle": "When a small business outgrows Squarespace and when it does not. Focus on CMS structure, design control, and who edits the site.",
-      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
       "cta": "/quote"
     },
     {
       "keyword": "webflow vs wix",
       "slug": "webflow-vs-wix",
-      "volume": 480, "kd": 18,
+      "volume": 480,
+      "kd": 18,
       "angle": "Wix versus Webflow for a local business: ease of editing, design limits, SEO settings, and moving later.",
-      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
       "cta": "/quote"
     },
     {
       "keyword": "restaurant website design",
       "slug": "restaurant-website-design",
-      "volume": 1300, "kd": 36,
+      "volume": 1300,
+      "kd": 36,
       "angle": "What a restaurant site needs on a phone: menu as real text not a PDF, hours, location, reservations or ordering link, and photos that load fast.",
-      "category": "Web Design", "subCategory": "UX/UI Design Tips",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
       "cta": "/free-mock-up"
     },
     {
       "keyword": "website seo for roofing contractor",
       "slug": "roofing-contractor-website-seo",
-      "volume": 480, "kd": 14,
+      "volume": 480,
+      "kd": 14,
       "angle": "Local SEO basics for a roofing contractor site: service area pages, Google Business Profile, page titles, project photos with alt text, and reviews.",
-      "category": "SEO & Analytics", "subCategory": "Local SEO",
+      "category": "SEO & Analytics",
+      "subCategory": "Local SEO",
       "cta": "/free-mock-up"
     },
     {
       "keyword": "hvac contractor website",
       "slug": "hvac-contractor-website-checklist",
-      "volume": 480, "kd": 9,
+      "volume": 480,
+      "kd": 9,
       "angle": "A checklist to evaluate an HVAC contractor website: emergency contact visibility, service pages, financing info placement, mobile speed, and booking.",
-      "category": "Web Design", "subCategory": "Website Makeovers",
+      "category": "Web Design",
+      "subCategory": "Website Makeovers",
       "cta": "/free-mock-up"
     },
     {
       "keyword": "webflow vs shopify",
       "slug": "webflow-vs-shopify",
-      "volume": 260, "kd": 16,
+      "volume": 260,
+      "kd": 16,
       "angle": "Webflow versus Shopify for a small brand that sells online: catalog size, checkout needs, content and design, and when to combine them.",
-      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
       "cta": "/quote"
     },
     {
       "keyword": "websites for contractors",
       "slug": "websites-for-contractors-pages-that-matter",
-      "volume": 720, "kd": 30,
+      "volume": 720,
+      "kd": 30,
       "angle": "The five pages every contractor site should have and what goes on each one.",
-      "category": "Web Design", "subCategory": "UX/UI Design Tips",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
       "cta": "/free-mock-up"
     },
     {
       "keyword": "webflow vs bubble",
       "slug": "webflow-vs-bubble",
-      "volume": 210, "kd": 12,
+      "volume": 210,
+      "kd": 12,
       "angle": "Webflow builds marketing websites, Bubble builds web apps. Explain the difference and how a business decides which it needs.",
-      "category": "Development & Tech", "subCategory": "Emerging Technologies",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
       "cta": "/contact"
+    },
+    {
+      "keyword": "what is webflow",
+      "slug": "what-is-webflow",
+      "volume": 1600,
+      "kd": 25,
+      "angle": "Explain what Webflow is to a business owner: visual builder, CMS, hosting, who it suits and who it does not. No prices or plan details.",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "website design for plumbers",
+      "slug": "website-design-for-plumbers",
+      "volume": 390,
+      "kd": 12,
+      "angle": "What a plumber's website needs: emergency call button, service area, services list, license info, reviews, and fast mobile pages.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "webflow alternatives",
+      "slug": "webflow-alternatives",
+      "volume": 390,
+      "kd": 12,
+      "angle": "When Webflow is not the right fit and what kinds of tools fit instead (WordPress, Squarespace, Shopify, Framer), framed by business needs. No prices.",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "website design for therapists",
+      "slug": "website-design-for-therapists",
+      "volume": 720,
+      "kd": 24,
+      "angle": "What a therapy practice site needs: calm design, clear specialties, insurance and fees page placeholder guidance, booking, privacy. Note that privacy rules should be confirmed with their own compliance advisor; give no legal advice.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "small business website maintenance",
+      "slug": "small-business-website-maintenance",
+      "volume": 320,
+      "kd": 5,
+      "angle": "A monthly and quarterly maintenance checklist for a small business site: content, forms, links, backups, speed, security updates, analytics.",
+      "category": "Resources & Tools",
+      "subCategory": "Tutorials & Guides",
+      "cta": "/contact"
+    },
+    {
+      "keyword": "website design for dentists",
+      "slug": "website-design-for-dentists",
+      "volume": 590,
+      "kd": 23,
+      "angle": "What a dental practice site needs: services pages, new patient info, booking, insurance info placement, location and hours, mobile speed.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "hire webflow designer",
+      "slug": "how-to-hire-a-webflow-designer",
+      "volume": 320,
+      "kd": 22,
+      "angle": "How to hire a Webflow designer: what to ask, how to review a portfolio, what a good process looks like, and red flags. No prices.",
+      "category": "Resources & Tools",
+      "subCategory": "Tutorials & Guides",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "best contractor websites",
+      "slug": "what-the-best-contractor-websites-have-in-common",
+      "volume": 320,
+      "kd": 9,
+      "angle": "The traits strong contractor websites share. Do not name or describe real companies; describe patterns and give hypothetical examples.",
+      "category": "Web Design",
+      "subCategory": "Website Makeovers",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "website design for doctors",
+      "slug": "website-design-for-doctors",
+      "volume": 590,
+      "kd": 17,
+      "angle": "What a medical practice site needs: provider bios, services, patient forms, booking, accessibility. Privacy rules should be confirmed with their compliance advisor; no legal advice.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "small business website examples",
+      "slug": "small-business-website-examples",
+      "volume": 590,
+      "kd": 21,
+      "angle": "Describe hypothetical example layouts for different small business types (restaurant, contractor, salon, practice) and why each structure works. Do not name real businesses.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "website design for roofers",
+      "slug": "website-design-for-roofers",
+      "volume": 260,
+      "kd": 14,
+      "angle": "What a roofing company site needs: storm and emergency messaging, service area, project galleries, financing info placement, quote form.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "webflow ecommerce",
+      "slug": "webflow-ecommerce-small-business",
+      "volume": 590,
+      "kd": 29,
+      "angle": "When Webflow ecommerce fits a small shop and when a dedicated store platform fits better, based on catalog size and checkout needs. No prices or plan limits.",
+      "category": "Development & Tech",
+      "subCategory": "Emerging Technologies",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "website management for small business",
+      "slug": "website-management-for-small-business",
+      "volume": 390,
+      "kd": 14,
+      "angle": "Who should own what on a small business website: content updates, technical upkeep, domains and logins, and how to decide between doing it in house or hiring help.",
+      "category": "Resources & Tools",
+      "subCategory": "Tutorials & Guides",
+      "cta": "/contact"
+    },
+    {
+      "keyword": "website design for manufacturers",
+      "slug": "website-design-for-manufacturers",
+      "volume": 480,
+      "kd": 11,
+      "angle": "What a manufacturer's site needs: capabilities pages, industries served, certifications, RFQ form, spec sheets, and a structure buyers can scan.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "painting contractor website design",
+      "slug": "painting-contractor-website-design",
+      "volume": 170,
+      "kd": 14,
+      "angle": "What a painting contractor site needs: before and after galleries that load fast, residential vs commercial pages, estimate form, service area.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "website design for home builders",
+      "slug": "website-design-for-home-builders",
+      "volume": 210,
+      "kd": 13,
+      "angle": "What a home builder site needs: communities or project portfolio, process page, floor plans presentation, inquiry flow.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "webflow analytics",
+      "slug": "webflow-analytics-setup",
+      "volume": 320,
+      "kd": 16,
+      "angle": "How to measure a Webflow site: options for analytics, connecting Google Analytics 4 and Tag Manager, tracking form submissions. Avoid plan specific feature claims.",
+      "category": "SEO & Analytics",
+      "subCategory": "Google Analytics Tips",
+      "cta": "/contact"
+    },
+    {
+      "keyword": "small business website packages",
+      "slug": "what-a-small-business-website-package-should-include",
+      "volume": 720,
+      "kd": 17,
+      "angle": "What a small business website package should include and questions to ask before buying one: pages, CMS, hosting, ownership of domain and content, support. No prices.",
+      "category": "Resources & Tools",
+      "subCategory": "Tutorials & Guides",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "website design for construction company",
+      "slug": "website-design-for-construction-company",
+      "volume": 260,
+      "kd": 21,
+      "angle": "What a construction company site needs for commercial clients: capabilities, project case pages structure, safety and certifications, bid request flow.",
+      "category": "Web Design",
+      "subCategory": "Website Makeovers",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "electrical contractor website",
+      "slug": "electrical-contractor-website",
+      "volume": 140,
+      "kd": 17,
+      "angle": "What an electrical contractor site needs: residential vs commercial services, emergency contact, licensing info, quote form, local pages.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/free-mock-up"
+    },
+    {
+      "keyword": "website design for financial advisors",
+      "slug": "website-design-for-financial-advisors",
+      "volume": 210,
+      "kd": 14,
+      "angle": "What a financial advisor site needs: clear services, who they serve, team bios, booking. Compliance review of site copy should go through their firm; no legal or financial advice.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/quote"
+    },
+    {
+      "keyword": "website design for schools",
+      "slug": "website-design-for-schools",
+      "volume": 320,
+      "kd": 13,
+      "angle": "What a school website needs: parent focused navigation, calendar and announcements, admissions path, accessibility, and easy staff editing.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/contact"
+    },
+    {
+      "keyword": "website design for family lawyer",
+      "slug": "website-design-for-family-law-firms",
+      "volume": 260,
+      "kd": 10,
+      "angle": "What a family law firm site needs: practice area pages, attorney bios, a calm tone, consultation booking. No legal advice; attorney advertising rules should be confirmed by the firm.",
+      "category": "Web Design",
+      "subCategory": "UX/UI Design Tips",
+      "cta": "/quote"
     }
-  ]
+  ],
+  "servicePageTargets": {
+    "_note": "Hiring intent keywords. These need real service pages, not blog posts. Do not draft these as articles.",
+    "webflow agency": [
+      [
+        "webflow development agency",
+        880,
+        15
+      ],
+      [
+        "webflow design agency",
+        480,
+        14
+      ],
+      [
+        "webflow development services",
+        390,
+        0
+      ],
+      [
+        "webflow agency",
+        1300,
+        30
+      ]
+    ],
+    "queens": [
+      [
+        "web design queens",
+        110,
+        6
+      ],
+      [
+        "web design in queens ny",
+        110,
+        1
+      ],
+      [
+        "web designer in queens",
+        110,
+        0
+      ],
+      [
+        "web designer queens",
+        110,
+        4
+      ],
+      [
+        "queens web design",
+        90,
+        0
+      ],
+      [
+        "web design company queens",
+        70,
+        0
+      ],
+      [
+        "professional web design services queens",
+        70,
+        7
+      ]
+    ],
+    "brooklyn": [
+      [
+        "brooklyn web design",
+        590,
+        26
+      ],
+      [
+        "web design in brooklyn",
+        590,
+        23
+      ],
+      [
+        "brooklyn web design company",
+        140,
+        9
+      ]
+    ],
+    "contractors": [
+      [
+        "contractor website design",
+        1600,
+        30
+      ],
+      [
+        "contractor website services",
+        480,
+        24
+      ],
+      [
+        "contractor website design agency",
+        320,
+        16
+      ]
+    ]
+  }
 }
